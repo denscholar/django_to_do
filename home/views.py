@@ -24,10 +24,31 @@ def mark_as_complete(request, pk):
     task.save()
     return redirect("home")
 
+
 def mark_as_undone(request, pk):
     task = get_object_or_404(Todo, pk=pk)
     task.is_completed = False
     task.save()
 
-    return redirect('home')
+    return redirect("home")
 
+
+def edit_task(request, pk):
+    get_task = get_object_or_404(Todo, pk=pk)
+
+    if request.method == "POST":
+        new_task = request.POST.get('task', '')
+        get_task.task = new_task
+        get_task.save()
+        return redirect('home') 
+
+    context = {
+        "get_task": get_task,
+    }
+    return render(request, "home/edit.html", context)
+
+
+def delete_task(request, pk):
+    delete_task = get_object_or_404(Todo, pk=pk)
+    delete_task.delete()
+    return redirect('home')
